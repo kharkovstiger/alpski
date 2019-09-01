@@ -10,8 +10,13 @@ import service.user.UserService;
 
 @Component
 public class SecUserDetailsService implements UserDetailsService {
+    
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
+    public SecUserDetailsService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

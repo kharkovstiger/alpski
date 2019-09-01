@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import repository.user.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class DefaultJwtAuthService implements JwtAuthService{
@@ -45,17 +46,19 @@ public class DefaultJwtAuthService implements JwtAuthService{
             return null;
         }
 
-        User currentUser = getCurrentUser(email);
-        currentUser = userRepository.save(currentUser);
-
-        return currentUser;
+        return getCurrentUser(email);
     }
 
     private User getCurrentUser(String email) {
-        User createdUser = new User();
-        createdUser.setEmail(email);
-        createdUser.setRegisteredDate(LocalDateTime.now());
+        User user = userRepository.getByEmail(email);
+        if (user == null) {
+            user = new User();
+            user.setEmail(email);
+            user.setRegisteredDate(LocalDateTime.now());
+            user.setPassword(UUID.randomUUID().toString());
+            userRepository.save(user);
+        }
 
-        return userRepository.save(createdUser);
+        return user;
     }
 }
